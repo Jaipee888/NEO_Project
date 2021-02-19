@@ -10,8 +10,8 @@ Although `datetime`s already have human-readable string representations, those
 representations display seconds, but NASA's data (and our datetimes!) don't
 provide that level of resolution, so the output format also will not.
 """
-import datetime
 
+import datetime
 
 def cd_to_datetime(calendar_date):
     """Convert a NASA-formatted calendar date/time description into a datetime.
