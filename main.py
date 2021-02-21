@@ -44,11 +44,10 @@ import shlex
 import sys
 import time
 
-from extract import load_neos, load_approaches
 from database import NEODatabase
+from extract import load_neos, load_approaches
 from filters import create_filters, limit
 from write import write_to_csv, write_to_json
-
 
 # Paths to the root of the project and the `data` subfolder.
 PROJECT_ROOT = pathlib.Path(__file__).parent.resolve()
@@ -97,26 +96,18 @@ def make_parser():
     inspect.add_argument('-v', '--verbose', action='store_true',
                          help="Additionally, print all known close approaches of this NEO.")
     inspect_id = inspect.add_mutually_exclusive_group(required=True)
-    inspect_id.add_argument('-p', '--pdes',
-                            help="The primary designation of the NEO to inspect (e.g. '433').")
-    inspect_id.add_argument('-n', '--name',
-                            help="The IAU name of the NEO to inspect (e.g. 'Halley').")
+    inspect_id.add_argument('-p', '--pdes', help="The primary designation of the NEO to inspect (e.g. '433').")
+    inspect_id.add_argument('-n', '--name', help="The IAU name of the NEO to inspect (e.g. 'Halley').")
 
     # Add the `query` subcommand parser.
-    query = subparsers.add_parser('query',
-                                  description="Query for close approaches that "
-                                              "match a collection of filters.")
-    filters = query.add_argument_group('Filters',
-                                       description="Filter close approaches by their attributes "
+    query = subparsers.add_parser('query', description="Query for close approaches that match a collection of filters.")
+    filters = query.add_argument_group('Filters', description="Filter close approaches by their attributes "
                                                    "or the attributes of their NEOs.")
-    filters.add_argument('-d', '--date', type=date_fromisoformat,
-                         help="Only return close approaches on the given date, "
+    filters.add_argument('-d', '--date', type=date_fromisoformat, help="Only return close approaches on the given date, "
                               "in YYYY-MM-DD format (e.g. 2020-12-31).")
-    filters.add_argument('-s', '--start-date', type=date_fromisoformat,
-                         help="Only return close approaches on or after the given date, "
+    filters.add_argument('-s', '--start-date', type=date_fromisoformat, help="Only return close approaches on or after the given date, "
                               "in YYYY-MM-DD format (e.g. 2020-12-31).")
-    filters.add_argument('-e', '--end-date', type=date_fromisoformat,
-                         help="Only return close approaches on or before the given date, "
+    filters.add_argument('-e', '--end-date', type=date_fromisoformat, help="Only return close approaches on or before the given date, "
                               "in YYYY-MM-DD format (e.g. 2020-12-31).")
     filters.add_argument('--min-distance', dest='distance_min', type=float,
                          help="In astronomical units. Only return close approaches that "
