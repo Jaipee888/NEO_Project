@@ -103,7 +103,7 @@ class CloseApproach:
         self.velocity = info.get('v_rel')
 
         # Create an attribute for the referenced NEO, originally None.
-        self.neo = info.get('neo')
+        self.neo = None
 
     @property
     def time_str(self):
