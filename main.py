@@ -43,6 +43,7 @@ import pathlib
 import shlex
 import sys
 import time
+import models
 
 from database import NEODatabase
 from extract import load_neos, load_approaches
@@ -179,10 +180,13 @@ def inspect(database, pdes=None, name=None, verbose=False):
         return None
 
     # Display information about this NEO, and optionally its close approaches if verbose.
-    print(neo)
+    print(neo.__str__())
+
     if verbose:
         for approach in neo.approaches:
-            print(f"- {approach}")
+            print("- On {}, '{} ({})' approaches Earth at a distance of {:.2f} au and a velocity of {:.2f}".
+                  format(approach['cd'], approach['des'], neo.name, float(approach['dist']), float(approach['v_rel'])))
+
     return neo
 
 

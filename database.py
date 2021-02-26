@@ -12,7 +12,8 @@ data on NEOs and close approaches extracted by `extract.load_neos` and
 You'll edit this file in Tasks 2 and 3.
 """
 
-import collections
+import models
+
 
 class NEODatabase:
     """A database of near-Earth objects and their close approaches.
@@ -41,12 +42,14 @@ class NEODatabase:
         :param neos: A collection of `NearEarthObject`s.
         :param approaches: A collection of `CloseApproach`es.
         """
-        self._neos = neos
-        self._approaches = approaches
-
+        self.neos = neos
+        self.approaches = approaches
         # TODO: What additional auxiliary data structures will be useful?
 
         # TODO: Link together the NEOs and their close approaches.
+        self.nearEarthObject = models.NearEarthObject()
+        self.closeApproachObject = models.CloseApproach()
+
 
     def get_neo_by_designation(self, designation):
         """Find and return an NEO by its primary designation.
@@ -62,7 +65,25 @@ class NEODatabase:
         :return: The `NearEarthObject` with the desired primary designation, or `None`.
         """
         # TODO: Fetch an NEO by its primary designation.
-        return None
+        for values in range(0, len(self.neos)):
+            if self.neos[values].get('pdes') == designation:
+                self.closeApproachObject.neo = self.neos[values]
+                self.nearEarthObject.name = self.neos[values].get('name')
+                self.nearEarthObject.designation = self.neos[values].get('pdes')
+                self.nearEarthObject.diameter = self.neos[values].get('diameter')
+                self.nearEarthObject.hazardous = self.neos[values].get('pha')
+                break
+            else:
+                continue
+
+        if self.nearEarthObject.designation == None:
+            return
+
+        for cValues in range(0, len(self.approaches)):
+            if self.approaches[cValues].get('des') == designation:
+                self.nearEarthObject.approaches.append(self.approaches[cValues])
+
+        return self.nearEarthObject
 
     def get_neo_by_name(self, name):
         """Find and return an NEO by its name.
@@ -79,7 +100,25 @@ class NEODatabase:
         :return: The `NearEarthObject` with the desired name, or `None`.
         """
         # TODO: Fetch an NEO by its name.
-        return None
+
+        for nameVal in range(0, len(self.neos)):
+            if self.neos[nameVal].get('name') == name:
+                self.closeApproachObject.neo = self.neos[nameVal]
+                self.nearEarthObject.name = self.neos[nameVal].get('name')
+                self.nearEarthObject.designation = self.neos[nameVal].get('pdes')
+                self.nearEarthObject.diameter = self.neos[nameVal].get('diameter')
+                self.nearEarthObject.hazardous = self.neos[nameVal].get('pha')
+                break
+            else:
+                continue
+
+        if self.nearEarthObject.name == None:
+            return
+
+        for appr in range(0, len(self.approaches)):
+            if self.approaches[appr].get('des') == self.nearEarthObject.designation:
+                self.nearEarthObject.approaches.append(self.approaches[appr])
+        return self.nearEarthObject
 
     def query(self, filters=()):
         """Query close approaches to generate those that match a collection of filters.
