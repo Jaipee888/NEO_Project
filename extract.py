@@ -34,6 +34,7 @@ def load_neos(neo_csv_path):
             dia = dict(row).get('diameter')
             haz = dict(row).get('pha')
             neo_list.append({'name': name, 'pdes': pdes, 'diameter': dia, 'pha': haz})
+
     return neo_list
 
 
@@ -52,4 +53,5 @@ def load_approaches(cad_json_path):
             for element in val:
                 closeApproach_list.append({'des': val[0], 'cd': val[3], 'dist':val[4], 'v_rel':val[7]})
                 break
+
     return closeApproach_list

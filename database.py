@@ -12,6 +12,7 @@ data on NEOs and close approaches extracted by `extract.load_neos` and
 You'll edit this file in Tasks 2 and 3.
 """
 
+import filters as ft
 import models
 
 
@@ -44,12 +45,12 @@ class NEODatabase:
         """
         self.neos = neos
         self.approaches = approaches
+
         # TODO: What additional auxiliary data structures will be useful?
 
         # TODO: Link together the NEOs and their close approaches.
         self.nearEarthObject = models.NearEarthObject()
         self.closeApproachObject = models.CloseApproach()
-
 
     def get_neo_by_designation(self, designation):
         """Find and return an NEO by its primary designation.
@@ -120,7 +121,7 @@ class NEODatabase:
                 self.nearEarthObject.approaches.append(self.approaches[appr])
         return self.nearEarthObject
 
-    def query(self, filters=()):
+    def query(self, filtDict=()):
         """Query close approaches to generate those that match a collection of filters.
 
         This generates a stream of `CloseApproach` objects that match all of the
@@ -134,6 +135,181 @@ class NEODatabase:
         :param filters: A collection of filters capturing user-specified criteria.
         :return: A stream of matching `CloseApproach` objects.
         """
+
         # TODO: Generate `CloseApproach` objects that match all of the filters.
-        for approach in self._approaches:
-            yield approach
+        simple_date = filtDict['date']
+        start_date = filtDict['start_date']
+        end_date = filtDict['end_date']
+        max_distance = filtDict['distance_max']
+        min_distance = filtDict['distance_min']
+        max_velocity = filtDict['velocity_max']
+        min_velocity = filtDict['velocity_min']
+        max_diameter = filtDict['diameter_max']
+        min_diameter = filtDict['diameter_min']
+
+        # Logic for counter values.
+        arg_counter = 0
+        for v in filtDict.values():
+            if v:
+                arg_counter = arg_counter + 1
+
+        # print("The value of arg counter is: ", arg_counter)
+
+        for approach in self.approaches:
+
+            final_counter = 0
+
+            if simple_date:
+                # dt = datetime.strptime(approach['cd'], "%Y-%b-%d %H:%M")
+                dt = ft.date_filter(approach)
+                if simple_date == dt:
+                    final_counter += 1
+                else:
+                    continue
+                    # yield approach
+
+            if start_date:
+                dt_start = ft.date_filter(approach)
+                if start_date <= dt_start:
+                    final_counter += 1
+                else:
+                    continue
+                    # yield approach
+                    # filtered_values.append(approach)
+
+            if end_date:
+                dt_end = ft.date_filter(approach)
+                if dt_end <= end_date:
+                    final_counter += 1
+                else:
+                    continue
+                    # yield approach
+
+            if max_distance:
+                mxt_distance = float(approach['dist'])
+                if mxt_distance <= max_distance:
+                    final_counter += 1
+                else:
+                    continue
+
+            if min_distance:
+                mnt_distance = float(approach['dist'])
+                if min_distance <= mnt_distance:
+                    final_counter += 1
+                else:
+                    continue
+
+            if min_velocity:
+                mnt_velocity = float(approach['v_rel'])
+                if min_velocity <= mnt_velocity:
+                    final_counter += 1
+                else:
+                    continue
+
+            if max_velocity:
+                mxt_velocity = float(approach['v_rel'])
+                if mxt_velocity <= max_velocity:
+                    final_counter += 1
+                else:
+                    continue
+
+            if final_counter == arg_counter:
+                yield approach
+            else:
+                continue
+
+        return
+
+    def query_for_diameter(self, filtDict=()):
+        start_date = filtDict['start_date']
+        end_date = filtDict['end_date']
+        max_distance = filtDict['distance_max']
+        min_distance = filtDict['distance_min']
+        max_velocity = filtDict['velocity_max']
+        min_velocity = filtDict['velocity_min']
+        max_diameter = filtDict['diameter_max']
+        min_diameter = filtDict['diameter_min']
+        haz = filtDict['hazardous']
+
+        print(filtDict['hazardous'])
+
+        if haz is None:
+            haz = False
+
+        print("Haz status is: ", haz)
+        second_counter = 0
+        neo_list = list()
+        for approach in self.approaches:
+
+            if start_date:
+                dt_start = ft.date_filter(approach)
+                if start_date <= dt_start:
+                    second_counter += 1
+                else:
+                    continue
+
+            if end_date:
+                dt_end = ft.date_filter(approach)
+                if dt_end <= end_date:
+                    second_counter += 1
+                else:
+                    continue
+
+            if max_distance:
+                mxt_distance = float(approach['dist'])
+                if mxt_distance <= max_distance:
+                    second_counter += 1
+                else:
+                    continue
+
+            if min_distance:
+                mnt_distance = float(approach['dist'])
+                if min_distance <= mnt_distance:
+                    second_counter += 1
+                else:
+                    continue
+
+            if min_velocity:
+                mnt_velocity = float(approach['v_rel'])
+                if min_velocity <= mnt_velocity:
+                    second_counter += 1
+                else:
+                    continue
+
+            if max_velocity:
+                mxt_velocity = float(approach['v_rel'])
+                if mxt_velocity <= max_velocity:
+                    second_counter += 1
+                else:
+                    continue
+
+            neo_list.append(approach)
+
+        final_soln = list()
+        if min_diameter:
+            for val in neo_list:
+                for d in self.neos:
+                    if val['des'] == d['pdes']:
+                        float_dia = d['diameter']
+                        if float_dia:
+                            if min_diameter <= float(float_dia):
+                                if haz:
+                                    if d['pha'] == "Y":
+                                        yield val
+                                else:
+                                    yield val
+
+        if max_diameter:
+            for val in neo_list:
+                for d in self.neos:
+                    if val['des'] == d['pdes']:
+                        float_dia = d['diameter']
+                        if float_dia:
+                            if float(float_dia) <= max_diameter:
+                                if haz:
+                                    if d['pha'] == "Y":
+                                        yield val
+                                else:
+                                    yield val
+
+        return

@@ -561,7 +561,7 @@ Each `CloseApproach` must have attributes (or gettable properties) for the follo
 The `date` should resolve to a Python datetime, the `distance` should resolve to a float, and the `velocity` should resolve to a float.
 
 The `neo` attribute, for now, can be `None`. In its absence, you should include a `_designation` attribute with the primary designation of the close approach's NEO. In Task 2, you'll use the real data set and this `_designation` attribute to connect the `neo` attribute to a real `NearEarthObject` instance.
-
+**~~~~_~~~~_~~~~**````
 You can use the `cd_to_datetime` function in the `helpers` module to convert a calendar date from the format provided in `cad.json` (e.g. "1900-Jan-01 00:00") into a Python `datetime` object.
 
 The `__str__` method that you write is up to you - it'll determine how this object is printed, and should be human-readable. For inspiration, we adopted the following format:

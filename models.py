@@ -46,10 +46,10 @@ class NearEarthObject:
         # handle any edge cases, such as a empty name being represented by `None`
         # and a missing diameter being represented by `float('nan')`.
 
-        self.designation = info.get('pdes', None)
-        self.name = info.get('name', None)
+        self.designation = None
+        self.name = None
         self.diameter = float()
-        self.hazardous = info.get('pha', "default hazardous")
+        self.hazardous = ""
 
         # Create an empty initial collection of linked approaches.
         self.approaches = []
@@ -103,9 +103,9 @@ class CloseApproach():
         # onto attributes named `_designation`, `time`, `distance`, and `velocity`.
         # You should coerce these values to their appropriate data type and handle any edge cases.
         # The `cd_to_datetime` function will be useful.
-        self.designation = info.get('des', "default des")
-
-        self.time = cd_to_datetime(info.get('cd', "2010-12-12 13:12"))  # TODO: Use the cd_to_datetime function for this attribute.
+        self.designation = None
+        self.time = cd_to_datetime(
+            info.get('cd', "2010-12-12 13:12"))  # TODO: Use the cd_to_datetime function for this attribute.
         self.distance = float()
         self.velocity = float()
 
@@ -127,7 +127,9 @@ class CloseApproach():
         """
         # TODO: Use this object's `.time` attribute and the `datetime_to_str` function to
         # build a formatted representation of the approach time.
+        print("The value of self.time before change is: ", self.time)
         self.time = datetime_to_str(self.time)
+        print("The value of self.time after change is: ", self.time)
         # TODO: Use self.designation and self.name to build a fullname for this object.
 
         return self.time
@@ -138,9 +140,8 @@ class CloseApproach():
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
 
-
-        return f"On {self.time}, '{self.designation}' approaches Earth at a distance of {self.distance:.2f} au" \
-               f"and a velocity of {self.velocity:.2f} km/s."
+        return f"On {self.time}, '{self.designation}' approaches Earth at a distance of {float(self.distance):.2f} au " \
+               f"and a velocity of {float(self.velocity):.2f} km/s."
 
     def __repr__(self):
         """Return `repr(self)`, a computer-readable string representation of this object."""

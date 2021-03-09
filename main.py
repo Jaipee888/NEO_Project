@@ -212,13 +212,28 @@ def query(database, args):
         diameter_min=args.diameter_min, diameter_max=args.diameter_max,
         hazardous=args.hazardous
     )
+
+    res = models.CloseApproach()
+
     # Query the database with the collection of filters.
-    results = database.query(filters)
+    if filters['diameter_max'] or filters['diameter_min']:
+        results = database.query_for_diameter(filters)
+    else:
+        results = database.query(filters)
 
     if not args.outfile:
         # Write the results to stdout, limiting to 10 entries if not specified.
         for result in limit(results, args.limit or 10):
-            print(result)
+            try:
+                cl_approach = next(result)
+                res.designation = cl_approach['des']
+                res.time = cl_approach['cd']
+                res.distance = cl_approach['dist']
+                res.velocity = cl_approach['v_rel']
+                print(res.__str__())
+            except StopIteration:
+                break
+
     else:
         # Write the results to a file.
         if args.outfile.suffix == '.csv':
