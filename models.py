@@ -79,7 +79,7 @@ class NearEarthObject:
                 f"diameter={self.diameter:.3f}, hazardous={self.hazardous!r})")
 
 
-class CloseApproach():
+class CloseApproach:
     """A close approach to Earth by an NEO.
 
     A `CloseApproach` encapsulates information about the NEO's close approach to
@@ -103,14 +103,19 @@ class CloseApproach():
         # onto attributes named `_designation`, `time`, `distance`, and `velocity`.
         # You should coerce these values to their appropriate data type and handle any edge cases.
         # The `cd_to_datetime` function will be useful.
-        self.designation = None
+        # self.designation = None
+        # self.time = cd_to_datetime(info.get('cd', "1905-Apr-01 00:11"))  # TODO: Use the cd_to_datetime function for this attribute.
+        # self.distance = float()
+        # self.velocity = float()
+
+        self.designation = info.get('des')
         self.time = cd_to_datetime(
-            info.get('cd', "2010-12-12 13:12"))  # TODO: Use the cd_to_datetime function for this attribute.
-        self.distance = float()
-        self.velocity = float()
+            info.get('cd', "1905-Apr-01 00:11"))  # TODO: Use the cd_to_datetime function for this attribute.
+        self.distance = info.get('dist')
+        self.velocity = info.get('v_rel')
 
         # Create an attribute for the referenced NEO, originally None.
-        self.neo = None
+        self.neo = info.get('name')
 
     @property
     def time_str(self):
@@ -127,9 +132,7 @@ class CloseApproach():
         """
         # TODO: Use this object's `.time` attribute and the `datetime_to_str` function to
         # build a formatted representation of the approach time.
-        print("The value of self.time before change is: ", self.time)
         self.time = datetime_to_str(self.time)
-        print("The value of self.time after change is: ", self.time)
         # TODO: Use self.designation and self.name to build a fullname for this object.
 
         return self.time
@@ -140,7 +143,12 @@ class CloseApproach():
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
 
-        return f"On {self.time}, '{self.designation}' approaches Earth at a distance of {float(self.distance):.2f} au " \
+        if not self.neo:
+            fname = self.designation
+        else:
+            fname = '{} ({})'.format(self.designation, self.neo)
+
+        return f"- On {self.time_str}, '{fname}' approaches Earth at a distance of {float(self.distance):.2f} au " \
                f"and a velocity of {float(self.velocity):.2f} km/s."
 
     def __repr__(self):

@@ -43,8 +43,8 @@ import pathlib
 import shlex
 import sys
 import time
-import models
 
+import models
 from database import NEODatabase
 from extract import load_neos, load_approaches
 from filters import create_filters, limit
@@ -103,12 +103,15 @@ def make_parser():
     # Add the `query` subcommand parser.
     query = subparsers.add_parser('query', description="Query for close approaches that match a collection of filters.")
     filters = query.add_argument_group('Filters', description="Filter close approaches by their attributes "
-                                                   "or the attributes of their NEOs.")
-    filters.add_argument('-d', '--date', type=date_fromisoformat, help="Only return close approaches on the given date, "
+                                                              "or the attributes of their NEOs.")
+    filters.add_argument('-d', '--date', type=date_fromisoformat,
+                         help="Only return close approaches on the given date, "
                               "in YYYY-MM-DD format (e.g. 2020-12-31).")
-    filters.add_argument('-s', '--start-date', type=date_fromisoformat, help="Only return close approaches on or after the given date, "
+    filters.add_argument('-s', '--start-date', type=date_fromisoformat,
+                         help="Only return close approaches on or after the given date, "
                               "in YYYY-MM-DD format (e.g. 2020-12-31).")
-    filters.add_argument('-e', '--end-date', type=date_fromisoformat, help="Only return close approaches on or before the given date, "
+    filters.add_argument('-e', '--end-date', type=date_fromisoformat,
+                         help="Only return close approaches on or before the given date, "
                               "in YYYY-MM-DD format (e.g. 2020-12-31).")
     filters.add_argument('--min-distance', dest='distance_min', type=float,
                          help="In astronomical units. Only return close approaches that "
@@ -184,8 +187,9 @@ def inspect(database, pdes=None, name=None, verbose=False):
 
     if verbose:
         for approach in neo.approaches:
-            print("- On {}, '{} ({})' approaches Earth at a distance of {:.2f} au and a velocity of {:.2f}".
-                  format(approach['cd'], approach['des'], neo.name, float(approach['dist']), float(approach['v_rel'])))
+            stm = models.CloseApproach(cd=approach['cd'], des=approach['des'], name=neo.name, dist=approach['dist'],
+                                       v_rel=approach['v_rel'])
+            print(stm.__str__())
 
     return neo
 
@@ -223,18 +227,25 @@ def query(database, args):
 
     if not args.outfile:
         # Write the results to stdout, limiting to 10 entries if not specified.
+
         for result in limit(results, args.limit or 10):
             try:
                 cl_approach = next(result)
-                res.designation = cl_approach['des']
-                res.time = cl_approach['cd']
-                res.distance = cl_approach['dist']
-                res.velocity = cl_approach['v_rel']
+
+                res = models.CloseApproach(des=cl_approach['des'], cd=cl_approach['cd'], name=cl_approach['name'],
+                                           dist=cl_approach['dist'], v_rel=cl_approach['v_rel'])
+                # res.designation = cl_approach['des']
+                # res.time = cl_approach['cd']
+                #
+                # res.distance = cl_approach['dist']
+                # res.velocity = cl_approach['v_rel']
+
                 print(res.__str__())
             except StopIteration:
                 break
 
     else:
+
         # Write the results to a file.
         if args.outfile.suffix == '.csv':
             write_to_csv(limit(results, args.limit), args.outfile)

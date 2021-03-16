@@ -93,6 +93,8 @@ You'll edit this file in Tasks 3a and 3c.
 
 def date_filter(approach):
     dtf = datetime.datetime.strptime(approach['cd'], "%Y-%b-%d %H:%M")
+    # print(dtf.date)
+
     return dtf.date()
 
 
@@ -156,7 +158,7 @@ def create_filters(date=None, start_date=None, end_date=None,
     return locals()
 
 
-def limit(iterator, n=None):
+def limit(iterator, n):
     """Produce a limited stream of values from an iterator.
 
     If `n` is 0 or None, don't limit the iterator at all.
@@ -166,5 +168,10 @@ def limit(iterator, n=None):
     :yield: The first (at most) `n` values from the iterator.
     """
     # TODO: Produce at most `n` values from the given iterator.
-    for values in range(0, n):
-        yield iterator
+
+    if n:
+        for values in range(0, n):
+            yield iterator
+    else:
+        while n != 1:
+            yield iterator

@@ -17,7 +17,8 @@ import models
 
 
 class NEODatabase:
-    """A database of near-Earth objects and their close approaches.
+    """
+    A database of near-Earth objects and their close approaches.
 
     A `NEODatabase` contains a collection of NEOs and a collection of close
     approaches. It additionally maintains a few auxiliary data structures to
@@ -49,10 +50,12 @@ class NEODatabase:
         # TODO: What additional auxiliary data structures will be useful?
 
         # TODO: Link together the NEOs and their close approaches.
+        self.linked_neo = list()
+
         self.nearEarthObject = models.NearEarthObject()
         self.closeApproachObject = models.CloseApproach()
 
-    def get_neo_by_designation(self, designation):
+    def get_neo_by_designation(self, designation, neo_only=False):
         """Find and return an NEO by its primary designation.
 
         If no match is found, return `None` instead.
@@ -65,14 +68,26 @@ class NEODatabase:
         :param designation: The primary designation of the NEO to search for.
         :return: The `NearEarthObject` with the desired primary designation, or `None`.
         """
+
         # TODO: Fetch an NEO by its primary designation.
-        for values in range(0, len(self.neos)):
-            if self.neos[values].get('pdes') == designation:
-                self.closeApproachObject.neo = self.neos[values]
-                self.nearEarthObject.name = self.neos[values].get('name')
-                self.nearEarthObject.designation = self.neos[values].get('pdes')
-                self.nearEarthObject.diameter = self.neos[values].get('diameter')
-                self.nearEarthObject.hazardous = self.neos[values].get('pha')
+        # for values in range(0, len(self.neos)):
+        #     if self.neos[values].get('pdes') == designation:
+        #         self.closeApproachObject.neo = self.neos[values]
+        #         self.nearEarthObject.name = self.neos[values].get('name')
+        #         self.nearEarthObject.designation = self.neos[values].get('pdes')
+        #         self.nearEarthObject.diameter = self.neos[values].get('diameter')
+        #         self.nearEarthObject.hazardous = self.neos[values].get('pha')
+        #         break
+        #     else:
+        #         continue
+
+        for desVal in self.neos:
+            if desVal.get('pdes') == designation:
+                self.closeApproachObject.neo = desVal
+                self.nearEarthObject.name = desVal.get('name')
+                self.nearEarthObject.designation = desVal.get('pdes')
+                self.nearEarthObject.diameter = desVal.get('diameter')
+                self.nearEarthObject.hazardous = desVal.get('pha')
                 break
             else:
                 continue
@@ -80,9 +95,19 @@ class NEODatabase:
         if self.nearEarthObject.designation == None:
             return
 
-        for cValues in range(0, len(self.approaches)):
-            if self.approaches[cValues].get('des') == designation:
-                self.nearEarthObject.approaches.append(self.approaches[cValues])
+        if neo_only:
+            b = {'name': self.nearEarthObject.name, 'pdes': self.nearEarthObject.designation,
+                 'diameter': self.nearEarthObject.diameter,
+                 'pha': self.nearEarthObject.hazardous}
+            return b
+
+        # for cValues in range(0, len(self.approaches)):
+        #     if self.approaches[cValues].get('des') == designation:
+        #         self.nearEarthObject.approaches.append(self.approaches[cValues])
+
+        for dValues in self.approaches:
+            if dValues.get('des') == designation:
+                self.nearEarthObject.approaches.append(dValues)
 
         return self.nearEarthObject
 
@@ -102,13 +127,24 @@ class NEODatabase:
         """
         # TODO: Fetch an NEO by its name.
 
-        for nameVal in range(0, len(self.neos)):
-            if self.neos[nameVal].get('name') == name:
-                self.closeApproachObject.neo = self.neos[nameVal]
-                self.nearEarthObject.name = self.neos[nameVal].get('name')
-                self.nearEarthObject.designation = self.neos[nameVal].get('pdes')
-                self.nearEarthObject.diameter = self.neos[nameVal].get('diameter')
-                self.nearEarthObject.hazardous = self.neos[nameVal].get('pha')
+        # for nameVal in range(0, len(self.neos)):
+        #     if self.neos[nameVal].get('name') == name:
+        #         self.closeApproachObject.neo = self.neos[nameVal]
+        #         self.nearEarthObject.name = self.neos[nameVal].get('name')
+        #         self.nearEarthObject.designation = self.neos[nameVal].get('pdes')
+        #         self.nearEarthObject.diameter = self.neos[nameVal].get('diameter')
+        #         self.nearEarthObject.hazardous = self.neos[nameVal].get('pha')
+        #         break
+        #     else:
+        #         continue
+
+        for nameVal in self.neos:
+            if nameVal.get('name') == name:
+                self.closeApproachObject.neo = nameVal
+                self.nearEarthObject.name = nameVal.get('name')
+                self.nearEarthObject.designation = nameVal.get('pdes')
+                self.nearEarthObject.diameter = nameVal.get('diameter')
+                self.nearEarthObject.hazardous = nameVal.get('pha')
                 break
             else:
                 continue
@@ -116,10 +152,16 @@ class NEODatabase:
         if self.nearEarthObject.name == None:
             return
 
-        for appr in range(0, len(self.approaches)):
-            if self.approaches[appr].get('des') == self.nearEarthObject.designation:
-                self.nearEarthObject.approaches.append(self.approaches[appr])
+        # for appr in range(0, len(self.approaches)):
+        #     if self.approaches[appr].get('des') == self.nearEarthObject.designation:
+        #         self.nearEarthObject.approaches.append(self.approaches[appr])
+        # return self.nearEarthObject
+
+        for appr in self.approaches:
+            if appr.get('des') == self.nearEarthObject.designation:
+                self.nearEarthObject.approaches.append(appr)
         return self.nearEarthObject
+
 
     def query(self, filtDict=()):
         """Query close approaches to generate those that match a collection of filters.
@@ -146,6 +188,9 @@ class NEODatabase:
         min_velocity = filtDict['velocity_min']
         max_diameter = filtDict['diameter_max']
         min_diameter = filtDict['diameter_min']
+
+        # print("The start date is: ", start_date)
+        # print(type(start_date))
 
         # Logic for counter values.
         arg_counter = 0
@@ -214,13 +259,16 @@ class NEODatabase:
                     continue
 
             if final_counter == arg_counter:
-                yield approach
+                self.linked_neo = self.get_neo_by_designation(approach['des'], neo_only=True)
+                newval = {**self.linked_neo, **approach}
+                yield newval
             else:
                 continue
 
         return
 
     def query_for_diameter(self, filtDict=()):
+
         start_date = filtDict['start_date']
         end_date = filtDict['end_date']
         max_distance = filtDict['distance_max']
@@ -231,12 +279,9 @@ class NEODatabase:
         min_diameter = filtDict['diameter_min']
         haz = filtDict['hazardous']
 
-        print(filtDict['hazardous'])
-
         if haz is None:
             haz = False
 
-        print("Haz status is: ", haz)
         second_counter = 0
         neo_list = list()
         for approach in self.approaches:
@@ -285,7 +330,6 @@ class NEODatabase:
 
             neo_list.append(approach)
 
-        final_soln = list()
         if min_diameter:
             for val in neo_list:
                 for d in self.neos:
@@ -295,9 +339,13 @@ class NEODatabase:
                             if min_diameter <= float(float_dia):
                                 if haz:
                                     if d['pha'] == "Y":
-                                        yield val
+                                        self.linked_neo = d
+                                        newval = {**self.linked_neo, **val}
+                                        yield newval
                                 else:
-                                    yield val
+                                    self.linked_neo = d
+                                    newval = {**self.linked_neo, **val}
+                                    yield newval
 
         if max_diameter:
             for val in neo_list:
@@ -308,8 +356,12 @@ class NEODatabase:
                             if float(float_dia) <= max_diameter:
                                 if haz:
                                     if d['pha'] == "Y":
-                                        yield val
+                                        self.linked_neo = d
+                                        newval = {**self.linked_neo, **val}
+                                        yield newval
                                 else:
-                                    yield val
+                                    self.linked_neo = d
+                                    newval = {**self.linked_neo, **val}
+                                    yield newval
 
         return
