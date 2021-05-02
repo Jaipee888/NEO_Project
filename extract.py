@@ -59,7 +59,7 @@ def load_neos(neo_csv_path):
             else:
                 haz = False
 
-            neoObjAttr = models.NearEarthObject(name=name, pdes=pdes, diameter=dia, pha=haz)
+            neoObjAttr = models.NearEarthObject(name=name, designation=pdes, diameter=dia, hazardous=haz)
             neo_list.append(neoObjAttr)
             pdes_name[pdes] = neoObjAttr
 

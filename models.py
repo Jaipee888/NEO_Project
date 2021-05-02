@@ -47,10 +47,10 @@ class NearEarthObject:
         # handle any edge cases, such as a empty name being represented by `None`
         # and a missing diameter being represented by `float('nan')`.
 
-        self.designation = info.get('pdes')
+        self.designation = info.get('designation')
         self.name = info.get('name')
         self.diameter = info.get('diameter')
-        self.hazardous = info.get('pha')
+        self.hazardous = info.get('hazardous')
 
         # Create an empty initial collection of linked approaches.
         self.approaches = []
@@ -70,13 +70,14 @@ class NearEarthObject:
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
 
-        if self.hazardous == 'N' or self.hazardous == "" or self.hazardous == False:
-            self.hazardous = "is not"
+        # if self.hazardous == 'N' or self.hazardous == "" or self.hazardous == False:
+        #     self.hazardous = "is not"
+        # else:
+        #     self.hazardous = "is"
+        if self.hazardous:
+            return f"NEO {self.fullname} has a diameter of {self.diameter: .3f} km and is potentially hazardous"
         else:
-            self.hazardous = "is"
-
-        return f"NEO {self.fullname} has a diameter of {self.diameter: .3f} km and {self.hazardous} potentially " \
-               f"hazardous"
+            return f"NEO {self.fullname} has a diameter of {self.diameter: .3f} km and is not potentially"
 
     def __repr__(self):
         """Return `repr(self)`, a computer-readable string representation of this object."""
