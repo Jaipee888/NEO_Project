@@ -12,8 +12,19 @@ line, and uses the resulting collections to build an `NEODatabase`.
 
 You'll edit this file in Task 2.
 """
+
 import csv
 import json
+import models
+
+# neo_csv_path = "C:/Programming/Python/Udacity/NEO_Project/nd303-c1-advanced-python-techniques-project-starter/data" \
+#                "/neos.csv "
+# load_approaches_path = "C:/Programming/Python/Udacity/NEO_Project/nd303-c1-advanced-python-techniques-project-starter/data/cad.json"
+
+neo_list = list()
+closeApproach_list = list()
+pdes_name = dict()
+
 
 def load_neos(neo_csv_path):
     """Read near-Earth object information from a CSV file.
@@ -22,18 +33,35 @@ def load_neos(neo_csv_path):
     :return: A collection of `NearEarthObject`s.
     """
     # TODO: Load NEO data from the given CSV file.
-
-    neo_list = list()
-
     with open(neo_csv_path, 'r') as file:
         reader = csv.DictReader(file)
 
         for row in reader:
             name = dict(row).get('name')
+
+            if not name:
+                name = None
+
             pdes = dict(row).get('pdes')
+
+            if not pdes:
+                pdes = "nan"
+
             dia = dict(row).get('diameter')
+            if dia:
+                dia = float(dia)
+            else:
+                dia = float("nan")
+
             haz = dict(row).get('pha')
-            neo_list.append({'name': name, 'pdes': pdes, 'diameter': dia, 'pha': haz})
+            if haz == "Y":
+                haz = True
+            else:
+                haz = False
+
+            neoObjAttr = models.NearEarthObject(name=name, pdes=pdes, diameter=dia, pha=haz)
+            neo_list.append(neoObjAttr)
+            pdes_name[pdes] = neoObjAttr
 
     return neo_list
 
@@ -45,17 +73,15 @@ def load_approaches(cad_json_path):
     :return: A collection of `CloseApproach`es.
     """
     # TODO: Load close approach data from the given JSON file.
-    closeApproach_list = list()
+
     with open(cad_json_path) as f:
         data = json.load(f)
-        # for val in data['data']:
-        #     for element in val:
-        #         print("Element is: ", element)
-        #         print("Val is: ", val)
-        #         closeApproach_list.append({'des': val[0], 'cd': val[3], 'dist':val[4], 'v_rel':val[7]})
-        #         break
-
         for val in data['data']:
-            closeApproach_list.append({'des': val[0], 'cd': val[3], 'dist': val[4], 'v_rel': val[7]})
+            neo_name = pdes_name[val[0]]
+            closeApproach_list.append(
+                models.CloseApproach(des=val[0], cd=val[3], dist=float(val[4]), v_rel=float(val[7]),
+                                     neo_object=neo_name))
 
     return closeApproach_list
+
+# load_approaches(load_approaches_path)

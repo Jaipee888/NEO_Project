@@ -21,6 +21,7 @@ from database import NEODatabase
 
 # Paths to the test data files.
 TESTS_ROOT = (pathlib.Path(__file__).parent).resolve()
+print(TESTS_ROOT)
 TEST_NEO_FILE = TESTS_ROOT / 'test-neos-2020.csv'
 TEST_CAD_FILE = TESTS_ROOT / 'test-cad-2020.json'
 
@@ -44,6 +45,7 @@ class TestDatabase(unittest.TestCase):
         approaches = set()
         for neo in self.neos:
             approaches.update(neo.approaches)
+
         self.assertEqual(approaches, set(self.approaches))
 
     def test_database_construction_ensures_neos_mutually_exclude_approaches(self):
@@ -112,6 +114,7 @@ class TestDatabase(unittest.TestCase):
 
     def test_get_neo_by_name_missing(self):
         nonexistent = self.db.get_neo_by_name('not-real-name')
+
         self.assertIsNone(nonexistent)
 
 

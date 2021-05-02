@@ -11,7 +11,9 @@ representations display seconds, but NASA's data (and our datetimes!) don't
 provide that level of resolution, so the output format also will not.
 """
 
-import datetime
+# import datetime
+from datetime import datetime
+
 
 def cd_to_datetime(calendar_date):
     """Convert a NASA-formatted calendar date/time description into a datetime.
@@ -26,7 +28,7 @@ def cd_to_datetime(calendar_date):
     :param calendar_date: A calendar date in YYYY-bb-DD hh:mm format.
     :return: A naive `datetime` corresponding to the given calendar date and time.
     """
-    date_object = datetime.datetime.strptime(calendar_date, "%Y-%b-%d %H:%M")
+    date_object = datetime.strptime(calendar_date, "%Y-%b-%d %H:%M")
     return date_object
 
 
@@ -43,5 +45,6 @@ def datetime_to_str(dt):
     :return: That datetime, as a human-readable string without seconds.
     """
 
-    date_string = datetime.datetime.strftime(dt, "%Y-%m-%d %H:%M")
+    date_string = datetime.strftime(dt, "%Y-%m-%d %H:%M")
+
     return date_string

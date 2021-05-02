@@ -1,41 +1,5 @@
 #!/usr/bin/env python3
-"""Explore a dataset of near-Earth objects and their close approaches to Earth.
 
-See `README.md` for a detailed discussion of this project.
-
-This script can be invoked from the command line::
-
-    $ python3 main.py {inspect,query,interactive} [args]
-
-The `inspect` subcommand looks up an NEO by name or by primary designation, and
-optionally lists all of that NEO's known close approaches:
-
-    $ python3 main.py inspect --pdes 1P
-    $ python3 main.py inspect --name Halley
-    $ python3 main.py inspect --verbose --name Halley
-
-The `query` subcommand searches for close approaches that match given criteria:
-
-    $ python3 main.py query --date 1969-07-29
-    $ python3 main.py query --start-date 2020-01-01 --end-date 2020-01-31 --max-distance 0.025
-    $ python3 main.py query --start-date 2050-01-01 --min-distance 0.2 --min-velocity 50
-    $ python3 main.py query --date 2020-03-14 --max-velocity 25 --min-diameter 0.5 --hazardous
-    $ python3 main.py query --start-date 2000-01-01 --max-diameter 0.1 --not-hazardous
-    $ python3 main.py query --hazardous --max-distance 0.05 --min-velocity 30
-
-The set of results can be limited in size and/or saved to an output file in CSV
-or JSON format:
-
-    $ python3 main.py query --limit 5 --outfile results.csv
-    $ python3 main.py query --limit 15 --outfile results.json
-
-The `interactive` subcommand loads the NEO database and spawns an interactive
-command shell that can repeatedly execute `inspect` and `query` commands without
-having to wait to reload the database each time. However, it doesn't hot-reload.
-
-If needed, the script can load data from data files other than the default with
-`--neofile` or `--cadfile`.
-"""
 import argparse
 import cmd
 import datetime
@@ -187,23 +151,13 @@ def inspect(database, pdes=None, name=None, verbose=False):
 
     if verbose:
         for approach in neo.approaches:
-            stm = models.CloseApproach(cd=approach['cd'], des=approach['des'], name=neo.name, dist=approach['dist'],
-                                       v_rel=approach['v_rel'])
-            print(stm.__str__())
+            print(approach.__str__())
 
     return neo
 
 
 def query(database, args):
     """Perform the `query` subcommand.
-
-    Create a collection of filters with `create_filters` and supply them to the
-    database's `query` method to produce a stream of matching results.
-
-    If an output file wasn't given, print these results to stdout, limiting to
-    10 entries if no limit was specified. If an output file was given, use the
-    file's extension to infer whether the file should hold CSV or JSON data, and
-    then write the results to the output file in that format.
 
     :param database: The `NEODatabase` containing data on NEOs and their close approaches.
     :param args: All arguments from the command line, as parsed by the top-level parser.
@@ -220,10 +174,12 @@ def query(database, args):
     res = models.CloseApproach()
 
     # Query the database with the collection of filters.
-    if filters['diameter_max'] or filters['diameter_min']:
-        results = database.query_for_diameter(filters)
-    else:
-        results = database.query(filters)
+    # if filters['diameter_max'] or filters['diameter_min']:
+    #     results = database.query_for_diameter(filters)
+    # else:
+    #     results = database.query(filters)
+
+    results = database.query(filters)
 
     if not args.outfile:
         # Write the results to stdout, limiting to 10 entries if not specified.
@@ -231,16 +187,7 @@ def query(database, args):
         for result in limit(results, args.limit or 10):
             try:
                 cl_approach = next(result)
-
-                res = models.CloseApproach(des=cl_approach['des'], cd=cl_approach['cd'], name=cl_approach['name'],
-                                           dist=cl_approach['dist'], v_rel=cl_approach['v_rel'])
-                # res.designation = cl_approach['des']
-                # res.time = cl_approach['cd']
-                #
-                # res.distance = cl_approach['dist']
-                # res.velocity = cl_approach['v_rel']
-
-                print(res.__str__())
+                print(cl_approach)
             except StopIteration:
                 break
 

@@ -478,6 +478,14 @@ class TestQuery(unittest.TestCase):
         diameter_max = 1.5
         diameter_min = 0.5
 
+        # for approach in self.approaches:
+        #     print("Testing")
+        #     print(type(approach.time))  // class datetime.datetime
+        #     print(type(approach.time.date()))  // datetime.date
+        #     print("Start date is: ", type(start_date))  // datetime.date
+        #     if start_date <= approach.time.date() <= end_date:
+        #         print("True")
+
         expected = set(
             approach for approach in self.approaches
             if start_date <= approach.time.date() <= end_date

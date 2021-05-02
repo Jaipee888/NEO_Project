@@ -1,4 +1,5 @@
-"""Represent models for near-Earth objects and their close approaches.
+"""
+Represent models for near-Earth objects and their close approaches.
 
 The `NearEarthObject` class represents a near-Earth object. Each has a unique
 primary designation, an optional unique name, an optional diameter, and a flag
@@ -46,10 +47,10 @@ class NearEarthObject:
         # handle any edge cases, such as a empty name being represented by `None`
         # and a missing diameter being represented by `float('nan')`.
 
-        self.designation = None
-        self.name = None
-        self.diameter = float()
-        self.hazardous = ""
+        self.designation = info.get('pdes')
+        self.name = info.get('name')
+        self.diameter = info.get('diameter')
+        self.hazardous = info.get('pha')
 
         # Create an empty initial collection of linked approaches.
         self.approaches = []
@@ -58,7 +59,10 @@ class NearEarthObject:
     def fullname(self):
         """Return a representation of the full name of this NEO."""
         # TODO: Use self.designation and self.name to build a fullname for this object.
-        return f'{self.designation} ({self.name})'
+        if self.name:
+            return f'{self.designation} ({self.name})'
+        else:
+            return f'{self.designation}'
 
     def __str__(self):
         """Return `str(self)`."""
@@ -66,11 +70,12 @@ class NearEarthObject:
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
 
-        if self.hazardous == 'N' or self.hazardous == "":
+        if self.hazardous == 'N' or self.hazardous == "" or self.hazardous == False:
             self.hazardous = "is not"
         else:
             self.hazardous = "is"
-        return f"NEO {self.fullname} has a diameter of {float(self.diameter): .3f} km and {self.hazardous} potentially " \
+
+        return f"NEO {self.fullname} has a diameter of {self.diameter: .3f} km and {self.hazardous} potentially " \
                f"hazardous"
 
     def __repr__(self):
@@ -103,19 +108,14 @@ class CloseApproach:
         # onto attributes named `_designation`, `time`, `distance`, and `velocity`.
         # You should coerce these values to their appropriate data type and handle any edge cases.
         # The `cd_to_datetime` function will be useful.
-        # self.designation = None
-        # self.time = cd_to_datetime(info.get('cd', "1905-Apr-01 00:11"))  # TODO: Use the cd_to_datetime function for this attribute.
-        # self.distance = float()
-        # self.velocity = float()
 
         self.designation = info.get('des')
-        self.time = cd_to_datetime(
-            info.get('cd', "1905-Apr-01 00:11"))  # TODO: Use the cd_to_datetime function for this attribute.
+        self.time = cd_to_datetime(info.get('cd'))  # TODO: Use the cd_to_datetime function for this attribute.
         self.distance = info.get('dist')
         self.velocity = info.get('v_rel')
 
         # Create an attribute for the referenced NEO, originally None.
-        self.neo = info.get('name')
+        self.neo = info.get('neo_object')
 
     @property
     def time_str(self):
@@ -143,10 +143,10 @@ class CloseApproach:
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
 
-        if not self.neo:
+        if not self.neo.name:
             fname = self.designation
         else:
-            fname = '{} ({})'.format(self.designation, self.neo)
+            fname = '{}({})'.format(self.designation, self.neo.name)
 
         return f"- On {self.time_str}, '{fname}' approaches Earth at a distance of {float(self.distance):.2f} au " \
                f"and a velocity of {float(self.velocity):.2f} km/s."

@@ -75,6 +75,7 @@ class TestLoadNEOs(unittest.TestCase):
         self.assertEqual(neo.designation, '2101')
         self.assertEqual(neo.name, 'Adonis')
         self.assertEqual(neo.diameter, 0.6)
+        print("neo haz status is: ", neo.hazardous)
         self.assertEqual(neo.hazardous, True)
 
 
@@ -114,6 +115,7 @@ class TestLoadApproaches(unittest.TestCase):
 
     def test_approach_velocity_is_float(self):
         approach = self.get_first_approach_or_none()
+
         self.assertIsNotNone(approach)
         self.assertIsInstance(approach.velocity, float)
 

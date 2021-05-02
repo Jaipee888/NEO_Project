@@ -34,11 +34,18 @@ def write_to_csv(results, filename):
         writer.writeheader()
         for tmp_dict in results:
             ans_dict = next(tmp_dict)
-            ans_dict = {k: "NaN" if not v else v for k, v in ans_dict.items()}
-            writer.writerow(
-                {'datetime_utc': ans_dict['cd'], 'distance_au': ans_dict['dist'], 'velocity_km_s': ans_dict['v_rel'],
-                 'designation': ans_dict['des'], 'name': ans_dict['name'], 'diameter_km': ans_dict['diameter'],
-                 'potentially_hazardous': ans_dict['pha']})
+            writer.writerow({'datetime_utc': ans_dict.time, 'distance_au': ans_dict.distance,
+                             'velocity_km_s': ans_dict.velocity, 'designation': ans_dict.designation,
+                             'name': ans_dict.neo.name,
+                             'diameter_km': ans_dict.neo.diameter, 'potentially_hazardous': ans_dict.neo.hazardous})
+
+        # for tmp_dict in results:
+        #     ans_dict = next(tmp_dict)
+        #     ans_dict = {k: "NaN" if not v else v for k, v in ans_dict.items()}
+        #     writer.writerow(
+        #         {'datetime_utc': ans_dict['cd'], 'distance_au': ans_dict['dist'], 'velocity_km_s': ans_dict['v_rel'],
+        #          'designation': ans_dict['des'], 'name': ans_dict['name'], 'diameter_km': ans_dict['diameter'],
+        #          'potentially_hazardous': ans_dict['pha']})
 
 
 def write_to_json(results, filename):
@@ -58,14 +65,15 @@ def write_to_json(results, filename):
         for itemp in results:
             json_dict = next(itemp)
 
-            final_dict = {'datetime_utc': json_dict['cd'], 'distance_au': json_dict['dist'],
-                          'velocity_km_s': json_dict['v_rel'],
-                          'designation': json_dict['des'],
+            final_dict = {'datetime_utc': json_dict.time_str, 'distance_au': json_dict.distance,
+                          'velocity_km_s': json_dict.velocity,
+                          'designation': json_dict.designation,
                           "neo": {
-                              'name': json_dict['name'], 'diameter_km': json_dict['diameter'],
-                              'potentially_hazardous': json_dict['pha']
+                              'name': json_dict.neo.name, 'diameter_km': json_dict.neo.diameter,
+                              'potentially_hazardous': json_dict.neo.hazardous
                           }
                           }
             final_json.append(final_dict)
+            print(final_json)
 
         json.dump(final_json, write_file, indent=5)

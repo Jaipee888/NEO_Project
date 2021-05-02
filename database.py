@@ -1,19 +1,6 @@
-"""A database encapsulating collections of near-Earth objects and their close approaches.
-
-A `NEODatabase` holds an interconnected data set of NEOs and close approaches.
-It provides methods to fetch an NEO by primary designation or by name, as well
-as a method to query the set of close approaches that match a collection of
-user-specified criteria.
-
-Under normal circumstances, the main module creates one NEODatabase from the
-data on NEOs and close approaches extracted by `extract.load_neos` and
-`extract.load_approaches`.
-
-You'll edit this file in Tasks 2 and 3.
-"""
+import operator
 
 import filters as ft
-import models
 
 
 class NEODatabase:
@@ -44,18 +31,17 @@ class NEODatabase:
         :param neos: A collection of `NearEarthObject`s.
         :param approaches: A collection of `CloseApproach`es.
         """
-        self.neos = neos
-        self.approaches = approaches
 
-        # TODO: What additional auxiliary data structures will be useful?
+        # # # TODO: What additional auxiliary data structures will be useful?
+        # # # TODO: Link together the NEOs and their close approaches.
 
-        # TODO: Link together the NEOs and their close approaches.
-        self.linked_neo = list()
+        self.listneo = neos
+        self.listapproach = approaches
 
-        self.nearEarthObject = models.NearEarthObject()
-        self.closeApproachObject = models.CloseApproach()
+        for values in self.listapproach:
+            values.neo.approaches.append(values)
 
-    def get_neo_by_designation(self, designation, neo_only=False):
+    def get_neo_by_designation(self, designation):
         """Find and return an NEO by its primary designation.
 
         If no match is found, return `None` instead.
@@ -69,47 +55,11 @@ class NEODatabase:
         :return: The `NearEarthObject` with the desired primary designation, or `None`.
         """
 
-        # TODO: Fetch an NEO by its primary designation.
-        # for values in range(0, len(self.neos)):
-        #     if self.neos[values].get('pdes') == designation:
-        #         self.closeApproachObject.neo = self.neos[values]
-        #         self.nearEarthObject.name = self.neos[values].get('name')
-        #         self.nearEarthObject.designation = self.neos[values].get('pdes')
-        #         self.nearEarthObject.diameter = self.neos[values].get('diameter')
-        #         self.nearEarthObject.hazardous = self.neos[values].get('pha')
-        #         break
-        #     else:
-        #         continue
+        for desig in self.listneo:
+            if desig.designation == designation:
+                return desig
 
-        for desVal in self.neos:
-            if desVal.get('pdes') == designation:
-                self.closeApproachObject.neo = desVal
-                self.nearEarthObject.name = desVal.get('name')
-                self.nearEarthObject.designation = desVal.get('pdes')
-                self.nearEarthObject.diameter = desVal.get('diameter')
-                self.nearEarthObject.hazardous = desVal.get('pha')
-                break
-            else:
-                continue
-
-        if self.nearEarthObject.designation == None:
-            return
-
-        if neo_only:
-            b = {'name': self.nearEarthObject.name, 'pdes': self.nearEarthObject.designation,
-                 'diameter': self.nearEarthObject.diameter,
-                 'pha': self.nearEarthObject.hazardous}
-            return b
-
-        # for cValues in range(0, len(self.approaches)):
-        #     if self.approaches[cValues].get('des') == designation:
-        #         self.nearEarthObject.approaches.append(self.approaches[cValues])
-
-        for dValues in self.approaches:
-            if dValues.get('des') == designation:
-                self.nearEarthObject.approaches.append(dValues)
-
-        return self.nearEarthObject
+        return
 
     def get_neo_by_name(self, name):
         """Find and return an NEO by its name.
@@ -127,41 +77,11 @@ class NEODatabase:
         """
         # TODO: Fetch an NEO by its name.
 
-        # for nameVal in range(0, len(self.neos)):
-        #     if self.neos[nameVal].get('name') == name:
-        #         self.closeApproachObject.neo = self.neos[nameVal]
-        #         self.nearEarthObject.name = self.neos[nameVal].get('name')
-        #         self.nearEarthObject.designation = self.neos[nameVal].get('pdes')
-        #         self.nearEarthObject.diameter = self.neos[nameVal].get('diameter')
-        #         self.nearEarthObject.hazardous = self.neos[nameVal].get('pha')
-        #         break
-        #     else:
-        #         continue
+        for val in self.listneo:
+            if val.name == name:
+                return val
 
-        for nameVal in self.neos:
-            if nameVal.get('name') == name:
-                self.closeApproachObject.neo = nameVal
-                self.nearEarthObject.name = nameVal.get('name')
-                self.nearEarthObject.designation = nameVal.get('pdes')
-                self.nearEarthObject.diameter = nameVal.get('diameter')
-                self.nearEarthObject.hazardous = nameVal.get('pha')
-                break
-            else:
-                continue
-
-        if self.nearEarthObject.name == None:
-            return
-
-        # for appr in range(0, len(self.approaches)):
-        #     if self.approaches[appr].get('des') == self.nearEarthObject.designation:
-        #         self.nearEarthObject.approaches.append(self.approaches[appr])
-        # return self.nearEarthObject
-
-        for appr in self.approaches:
-            if appr.get('des') == self.nearEarthObject.designation:
-                self.nearEarthObject.approaches.append(appr)
-        return self.nearEarthObject
-
+        return
 
     def query(self, filtDict=()):
         """Query close approaches to generate those that match a collection of filters.
@@ -179,96 +99,7 @@ class NEODatabase:
         """
 
         # TODO: Generate `CloseApproach` objects that match all of the filters.
-        simple_date = filtDict['date']
-        start_date = filtDict['start_date']
-        end_date = filtDict['end_date']
-        max_distance = filtDict['distance_max']
-        min_distance = filtDict['distance_min']
-        max_velocity = filtDict['velocity_max']
-        min_velocity = filtDict['velocity_min']
-        max_diameter = filtDict['diameter_max']
-        min_diameter = filtDict['diameter_min']
-
-        # print("The start date is: ", start_date)
-        # print(type(start_date))
-
-        # Logic for counter values.
-        arg_counter = 0
-        for v in filtDict.values():
-            if v:
-                arg_counter = arg_counter + 1
-
-        # print("The value of arg counter is: ", arg_counter)
-
-        for approach in self.approaches:
-
-            final_counter = 0
-
-            if simple_date:
-                # dt = datetime.strptime(approach['cd'], "%Y-%b-%d %H:%M")
-                dt = ft.date_filter(approach)
-                if simple_date == dt:
-                    final_counter += 1
-                else:
-                    continue
-                    # yield approach
-
-            if start_date:
-                dt_start = ft.date_filter(approach)
-                if start_date <= dt_start:
-                    final_counter += 1
-                else:
-                    continue
-                    # yield approach
-                    # filtered_values.append(approach)
-
-            if end_date:
-                dt_end = ft.date_filter(approach)
-                if dt_end <= end_date:
-                    final_counter += 1
-                else:
-                    continue
-                    # yield approach
-
-            if max_distance:
-                mxt_distance = float(approach['dist'])
-                if mxt_distance <= max_distance:
-                    final_counter += 1
-                else:
-                    continue
-
-            if min_distance:
-                mnt_distance = float(approach['dist'])
-                if min_distance <= mnt_distance:
-                    final_counter += 1
-                else:
-                    continue
-
-            if min_velocity:
-                mnt_velocity = float(approach['v_rel'])
-                if min_velocity <= mnt_velocity:
-                    final_counter += 1
-                else:
-                    continue
-
-            if max_velocity:
-                mxt_velocity = float(approach['v_rel'])
-                if mxt_velocity <= max_velocity:
-                    final_counter += 1
-                else:
-                    continue
-
-            if final_counter == arg_counter:
-                self.linked_neo = self.get_neo_by_designation(approach['des'], neo_only=True)
-                newval = {**self.linked_neo, **approach}
-                yield newval
-            else:
-                continue
-
-        return
-
-    def query_for_diameter(self, filtDict=()):
-
+        simple_date = filtDict["date"]
         start_date = filtDict['start_date']
         end_date = filtDict['end_date']
         max_distance = filtDict['distance_max']
@@ -279,89 +110,92 @@ class NEODatabase:
         min_diameter = filtDict['diameter_min']
         haz = filtDict['hazardous']
 
-        if haz is None:
-            haz = False
+        # Logic for counter values.
+        arg_counter = 0
+        for v in filtDict.values():
+            if v:
+                arg_counter = arg_counter + 1
 
-        second_counter = 0
-        neo_list = list()
-        for approach in self.approaches:
+        # print("The value of arg counter is: ", arg_counter)
+
+        for approach in self.listapproach:
+
+            final_counter = 0
+
+            if simple_date:
+                dt = ft.DateFilter(operator.eq, simple_date)
+                if dt(approach):
+                    final_counter += 1
+                else:
+                    continue
 
             if start_date:
-                dt_start = ft.date_filter(approach)
-                if start_date <= dt_start:
-                    second_counter += 1
+                dt_start = ft.DateFilter(operator.ge, start_date)
+                if dt_start(approach):
+                    final_counter += 1
                 else:
                     continue
 
             if end_date:
-                dt_end = ft.date_filter(approach)
-                if dt_end <= end_date:
-                    second_counter += 1
+                dt_end = ft.DateFilter(operator.le, end_date)
+                if dt_end(approach):
+                    final_counter += 1
                 else:
                     continue
 
             if max_distance:
-                mxt_distance = float(approach['dist'])
-                if mxt_distance <= max_distance:
-                    second_counter += 1
+                dt_distance = ft.DistanceFilter(operator.le, max_distance)
+                if dt_distance(approach):
+                    final_counter += 1
                 else:
                     continue
 
             if min_distance:
-                mnt_distance = float(approach['dist'])
-                if min_distance <= mnt_distance:
-                    second_counter += 1
+                dt_distance = ft.DistanceFilter(operator.ge, min_distance)
+                if dt_distance(approach):
+                    final_counter += 1
                 else:
                     continue
 
             if min_velocity:
-                mnt_velocity = float(approach['v_rel'])
-                if min_velocity <= mnt_velocity:
-                    second_counter += 1
+                dt_velocity = ft.VelocityFilter(operator.ge, min_velocity)
+                if dt_velocity(approach):
+                    final_counter += 1
                 else:
                     continue
 
             if max_velocity:
-                mxt_velocity = float(approach['v_rel'])
-                if mxt_velocity <= max_velocity:
-                    second_counter += 1
+                dt_velocity = ft.VelocityFilter(operator.le, max_velocity)
+                if dt_velocity(approach):
+                    final_counter += 1
                 else:
                     continue
 
-            neo_list.append(approach)
+            if min_diameter:
+                dt_diameter = ft.DiameterFilter(operator.ge, min_diameter)
+                if dt_diameter(approach):
+                    final_counter += 1
+                else:
+                    continue
 
-        if min_diameter:
-            for val in neo_list:
-                for d in self.neos:
-                    if val['des'] == d['pdes']:
-                        float_dia = d['diameter']
-                        if float_dia:
-                            if min_diameter <= float(float_dia):
-                                if haz:
-                                    if d['pha'] == "Y":
-                                        self.linked_neo = d
-                                        newval = {**self.linked_neo, **val}
-                                        yield newval
-                                else:
-                                    self.linked_neo = d
-                                    newval = {**self.linked_neo, **val}
-                                    yield newval
+            if max_diameter:
+                dt_diameter = ft.DiameterFilter(operator.le, max_diameter)
+                if dt_diameter(approach):
+                    final_counter += 1
+                else:
+                    continue
 
-        if max_diameter:
-            for val in neo_list:
-                for d in self.neos:
-                    if val['des'] == d['pdes']:
-                        float_dia = d['diameter']
-                        if float_dia:
-                            if float(float_dia) <= max_diameter:
-                                if haz:
-                                    if d['pha'] == "Y":
-                                        self.linked_neo = d
-                                        newval = {**self.linked_neo, **val}
-                                        yield newval
-                                else:
-                                    self.linked_neo = d
-                                    newval = {**self.linked_neo, **val}
-                                    yield newval
+            if haz:
+                dt_haz = ft.HazardFilter(operator.eq, haz)
+                if dt_haz(approach):
+                    final_counter += 1
+                else:
+                    continue
+
+            if final_counter == arg_counter:
+                yield approach
+            else:
+                continue
 
         return
+
