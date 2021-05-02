@@ -124,6 +124,7 @@ class NEODatabase:
 
             if simple_date:
                 dt = ft.DateFilter(operator.eq, simple_date)
+
                 if dt(approach):
                     final_counter += 1
                 else:

@@ -110,7 +110,8 @@ class CloseApproach:
         # The `cd_to_datetime` function will be useful.
 
         self.designation = info.get('des')
-        self.time = cd_to_datetime(info.get('cd'))  # TODO: Use the cd_to_datetime function for this attribute.
+        self.time = cd_to_datetime(
+            info.get('cd', "1900-Jan-01 00:11"))  # TODO: Use the cd_to_datetime function for this attribute.
         self.distance = info.get('dist')
         self.velocity = info.get('v_rel')
 
