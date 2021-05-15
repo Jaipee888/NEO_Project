@@ -18,7 +18,6 @@ import json
 
 import models
 
-
 neo_list = list()
 closeApproach_list = list()
 pdes_name = dict()
@@ -69,7 +68,7 @@ def load_neos(neo_csv_path):
 def load_approaches(cad_json_path):
     """Read close approach data from a JSON file.
 
-    :param neo_csv_path: A path to a JSON file containing data about close approaches.
+    :param cad_json_path:
     :return: A collection of `CloseApproach`es.
     """
     # TODO: Load close approach data from the given JSON file.

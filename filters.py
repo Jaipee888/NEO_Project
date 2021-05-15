@@ -71,54 +71,92 @@ class AttributeFilter:
         raise UnsupportedCriterionError
 
     def __repr__(self):
+        """Repr method for comparison of filter attributes."""
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
 
 class DateFilter(AttributeFilter):
+    """A date class for comparison of  dates."""
+
     def __init__(self, op, value):
+        """Inheriting the superclass Attributefilter."""
         super().__init__(op, value)
 
     @classmethod
     def get(cls, approach):
-        # print(approach.time)
-        # print(type(approach.time))
+        """A class method for getting the date of close approach.
+
+        :param approach - close approach object.
+        :return - approach date
+        """
         appr_date = approach.time.date()
         return appr_date
 
 
 class DistanceFilter(AttributeFilter):
+    """A distance class for comparison of distance attribute of close approach."""
+
     def __init__(self, op, value):
+        """Inheriting the superclass Attributefilter."""
         super().__init__(op, value)
 
     @classmethod
     def get(cls, approach):
+        """A class method for getting the distance of close approach.
+
+        :param approach - close approach object.
+        :return - approach distance
+        """
         appr_distance = approach.distance
         return appr_distance
 
 
 class VelocityFilter(AttributeFilter):
+    """A velocity class for comparison of velocity attribute of close approach."""
+
     def __init__(self, op, value):
+        """Inheriting the superclass Attributefilter."""
         super().__init__(op, value)
 
     @classmethod
     def get(cls, approach):
+        """A class method for getting the velocity of close approach.
+
+        :param approach - close approach object.
+        :return - approach velocity.
+        """
         appr_velocity = approach.velocity
         return appr_velocity
 
 
 class DiameterFilter(AttributeFilter):
+    """A Diameter class for comparison of diameter attribute of close approach."""
+
     def __init__(self, op, value):
+        """Inheriting the superclass Attributefilter."""
         super().__init__(op, value)
 
     @classmethod
     def get(cls, approach):
+        """A class method for getting the diameter of close approach.
+
+        :param approach: close approach object.
+        :return: approach diameter.
+        """
         neo_diameter = approach.neo
         return neo_diameter.diameter
 
 
 class HazardFilter(AttributeFilter):
+    """A Hazard filter class for filtering the hazardous data of close approach."""
+
     @classmethod
     def get(cls, approach):
+        """A class method for getting the type of hazard for close approach.
+
+        :param approach: close approach object
+        :return: approach hazard filter.
+        """
         haz_neo = approach.neo
         return haz_neo.hazardous
 
@@ -172,8 +210,6 @@ def limit(iterator, n=10):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
-
     itr = iter(iterator)
 
     if n:

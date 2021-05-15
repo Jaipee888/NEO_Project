@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-
+"""Main application of the programme."""
 import argparse
 import cmd
 import datetime
@@ -194,14 +193,13 @@ class NEOShell(cmd.Cmd):
     """Perform the `interactive` subcommand.
 
     This is a `cmd.Cmd` shell - a specialized tool for command-based REPL sessions.
-
     It wraps the `inspect` and `query` parsers to parse flags for those commands
     as if they were supplied at the command line.
-
     The primary purpose of this shell is to allow users to repeatedly perform
     inspect and query commands, while only loading the data (which can be quite
     slow) once.
     """
+
     intro = ("Explore close approaches of near-Earth objects. "
              "Type `help` or `?` to list commands and `exit` to exit.\n")
     prompt = '(neo) '

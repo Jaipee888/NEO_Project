@@ -11,7 +11,6 @@ representations display seconds, but NASA's data (and our datetimes!) don't
 provide that level of resolution, so the output format also will not.
 """
 
-# import datetime
 from datetime import datetime
 
 
@@ -45,7 +44,6 @@ def datetime_to_str(dt):
     :param dt: A naive Python datetime.
     :return: That datetime, as a human-readable string without seconds.
     """
-
     date_string = datetime.strftime(dt, "%Y-%m-%d %H:%M")
 
     return date_string
