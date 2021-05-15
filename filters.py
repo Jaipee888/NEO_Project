@@ -80,6 +80,8 @@ class DateFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
+        # print(approach.time)
+        # print(type(approach.time))
         appr_date = approach.time.date()
         return appr_date
 
@@ -161,7 +163,7 @@ def create_filters(date=None, start_date=None, end_date=None,
     return locals()
 
 
-def limit(iterator, n):
+def limit(iterator, n=10):
     """Produce a limited stream of values from an iterator.
 
     If `n` is 0 or None, don't limit the iterator at all.
@@ -172,9 +174,17 @@ def limit(iterator, n):
     """
     # TODO: Produce at most `n` values from the given iterator.
 
+    itr = iter(iterator)
+
     if n:
         for values in range(0, n):
-            yield iterator
+            try:
+                yield next(itr)
+            except StopIteration:
+                break
     else:
         while n != 1:
-            yield iterator
+            try:
+                yield next(itr)
+            except StopIteration:
+                break

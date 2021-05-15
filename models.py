@@ -67,13 +67,7 @@ class NearEarthObject:
     def __str__(self):
         """Return `str(self)`."""
         # TODO: Use this object's attributes to return a human-readable string representation.
-        # The project instructions include one possibility. Peek at the __repr__
-        # method for examples of advanced string formatting.
 
-        # if self.hazardous == 'N' or self.hazardous == "" or self.hazardous == False:
-        #     self.hazardous = "is not"
-        # else:
-        #     self.hazardous = "is"
         if self.hazardous:
             return f"NEO {self.fullname} has a diameter of {self.diameter: .3f} km and is potentially hazardous"
         else:
@@ -106,18 +100,20 @@ class CloseApproach:
         :param info: A dictionary of excess keyword arguments supplied to the constructor.
         """
         # TODO: Assign information from the arguments passed to the constructor
-        # onto attributes named `_designation`, `time`, `distance`, and `velocity`.
-        # You should coerce these values to their appropriate data type and handle any edge cases.
-        # The `cd_to_datetime` function will be useful.
 
-        self.designation = info.get('des')
-        self.time = cd_to_datetime(
-            info.get('cd', "1900-Jan-01 00:11"))  # TODO: Use the cd_to_datetime function for this attribute.
-        self.distance = info.get('dist')
-        self.velocity = info.get('v_rel')
+        self.designation = info.get('designation')
+        self.datetime = info.get('time')
+        self.time = cd_to_datetime(self.datetime)  # TODO: Use the cd_to_datetime function for this attribute.
+        # self.time = info.get('time')
+
+        self.distance = info.get('distance')
+        self.velocity = info.get('velocity')
 
         # Create an attribute for the referenced NEO, originally None.
-        self.neo = info.get('neo_object')
+        self.neo = info.get('neo')
+
+    # def get_designation(self):
+    #     return self._designation
 
     @property
     def time_str(self):
@@ -133,11 +129,10 @@ class CloseApproach:
         in serialization to CSV and JSON files.
         """
         # TODO: Use this object's `.time` attribute and the `datetime_to_str` function to
-        # build a formatted representation of the approach time.
-        self.time = datetime_to_str(self.time)
+
         # TODO: Use self.designation and self.name to build a fullname for this object.
 
-        return self.time
+        return datetime_to_str(self.time)
 
     def __str__(self):
         """Return `str(self)`."""

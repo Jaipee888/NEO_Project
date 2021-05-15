@@ -8,7 +8,7 @@ import shlex
 import sys
 import time
 
-import models
+
 from database import NEODatabase
 from extract import load_neos, load_approaches
 from filters import create_filters, limit
@@ -171,28 +171,16 @@ def query(database, args):
         hazardous=args.hazardous
     )
 
-    res = models.CloseApproach()
-
-    # Query the database with the collection of filters.
-    # if filters['diameter_max'] or filters['diameter_min']:
-    #     results = database.query_for_diameter(filters)
-    # else:
-    #     results = database.query(filters)
-
     results = database.query(filters)
 
     if not args.outfile:
         # Write the results to stdout, limiting to 10 entries if not specified.
-
         for result in limit(results, args.limit or 10):
             try:
-                cl_approach = next(result)
-                print(cl_approach)
+                print(result)
             except StopIteration:
                 break
-
     else:
-
         # Write the results to a file.
         if args.outfile.suffix == '.csv':
             write_to_csv(limit(results, args.limit), args.outfile)

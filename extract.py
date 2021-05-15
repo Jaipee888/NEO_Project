@@ -15,11 +15,9 @@ You'll edit this file in Task 2.
 
 import csv
 import json
+
 import models
 
-# neo_csv_path = "C:/Programming/Python/Udacity/NEO_Project/nd303-c1-advanced-python-techniques-project-starter/data" \
-#                "/neos.csv "
-# load_approaches_path = "C:/Programming/Python/Udacity/NEO_Project/nd303-c1-advanced-python-techniques-project-starter/data/cad.json"
 
 neo_list = list()
 closeApproach_list = list()
@@ -36,33 +34,35 @@ def load_neos(neo_csv_path):
     with open(neo_csv_path, 'r') as file:
         reader = csv.DictReader(file)
 
-        for row in reader:
-            name = dict(row).get('name')
+        if not neo_list:
+            for row in reader:
+                name = dict(row).get('name')
 
-            if not name:
-                name = None
+                if not name:
+                    name = None
 
-            pdes = dict(row).get('pdes')
+                pdes = dict(row).get('pdes')
 
-            if not pdes:
-                pdes = "nan"
+                if not pdes:
+                    pdes = "nan"
 
-            dia = dict(row).get('diameter')
-            if dia:
-                dia = float(dia)
-            else:
-                dia = float("nan")
+                dia = dict(row).get('diameter')
+                if dia:
+                    dia = float(dia)
+                else:
+                    dia = float("nan")
 
-            haz = dict(row).get('pha')
-            if haz == "Y":
-                haz = True
-            else:
-                haz = False
+                haz = dict(row).get('pha')
+                if haz == "Y":
+                    haz = True
+                else:
+                    haz = False
 
-            neoObjAttr = models.NearEarthObject(name=name, designation=pdes, diameter=dia, hazardous=haz)
-            neo_list.append(neoObjAttr)
-            pdes_name[pdes] = neoObjAttr
+                neoObjAttr = models.NearEarthObject(name=name, designation=pdes, diameter=dia, hazardous=haz)
+                neo_list.append(neoObjAttr)
+                pdes_name[pdes] = neoObjAttr
 
+    file.close()
     return neo_list
 
 
@@ -73,15 +73,18 @@ def load_approaches(cad_json_path):
     :return: A collection of `CloseApproach`es.
     """
     # TODO: Load close approach data from the given JSON file.
+    if len(pdes_name) == 0:
+        c = load_neos(neo_csv_path)
 
     with open(cad_json_path) as f:
         data = json.load(f)
-        for val in data['data']:
-            neo_name = pdes_name[val[0]]
-            closeApproach_list.append(
-                models.CloseApproach(des=val[0], cd=val[3], dist=float(val[4]), v_rel=float(val[7]),
-                                     neo_object=neo_name))
+        if not closeApproach_list:
+            for val in data['data']:
+                neo_name = pdes_name[val[0]]
+                closeApproach_list.append(
+                    models.CloseApproach(designation=val[0], time=val[3], distance=float(val[4]),
+                                         velocity=float(val[7]),
+                                         neo=neo_name))
 
+    f.close()
     return closeApproach_list
-
-# load_approaches(load_approaches_path)

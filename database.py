@@ -113,11 +113,14 @@ class NEODatabase:
         # Logic for counter values.
         arg_counter = 0
         for v in filtDict.values():
+
             if v:
                 arg_counter = arg_counter + 1
 
-        # print("The value of arg counter is: ", arg_counter)
+        # if haz or not haz:
+        #     arg_counter = arg_counter + 1
 
+        # print("The arg counter value at beginning is: ", arg_counter)
         for approach in self.listapproach:
 
             final_counter = 0
@@ -186,12 +189,16 @@ class NEODatabase:
                 else:
                     continue
 
-            if haz:
+            if haz is None:
+                final_counter = final_counter
+            elif haz:
                 dt_haz = ft.HazardFilter(operator.eq, haz)
                 if dt_haz(approach):
                     final_counter += 1
-                else:
-                    continue
+            else:
+                dt_haz = ft.HazardFilter(operator.eq, haz)
+                if not dt_haz(approach):
+                    final_counter += 1
 
             if final_counter == arg_counter:
                 yield approach
@@ -199,4 +206,3 @@ class NEODatabase:
                 continue
 
         return
-

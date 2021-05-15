@@ -19,7 +19,6 @@ import unittest
 from extract import load_neos, load_approaches
 from models import NearEarthObject, CloseApproach
 
-
 TESTS_ROOT = (pathlib.Path(__file__).parent).resolve()
 TEST_NEO_FILE = TESTS_ROOT / 'test-neos-2020.csv'
 TEST_CAD_FILE = TESTS_ROOT / 'test-cad-2020.json'
@@ -75,7 +74,6 @@ class TestLoadNEOs(unittest.TestCase):
         self.assertEqual(neo.designation, '2101')
         self.assertEqual(neo.name, 'Adonis')
         self.assertEqual(neo.diameter, 0.6)
-        print("neo haz status is: ", neo.hazardous)
         self.assertEqual(neo.hazardous, True)
 
 
