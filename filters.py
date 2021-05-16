@@ -84,7 +84,7 @@ class DateFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """A class method for getting the date of close approach.
+        """Class method for getting the date of close approach.
 
         :param approach - close approach object.
         :return - approach date
@@ -102,7 +102,7 @@ class DistanceFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """A class method for getting the distance of close approach.
+        """Class method for getting the distance of close approach.
 
         :param approach - close approach object.
         :return - approach distance
@@ -120,7 +120,7 @@ class VelocityFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """A class method for getting the velocity of close approach.
+        """Class method for getting the velocity of close approach.
 
         :param approach - close approach object.
         :return - approach velocity.
@@ -138,7 +138,7 @@ class DiameterFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """A class method for getting the diameter of close approach.
+        """Class method for getting the diameter of close approach.
 
         :param approach: close approach object.
         :return: approach diameter.
@@ -152,7 +152,7 @@ class HazardFilter(AttributeFilter):
 
     @classmethod
     def get(cls, approach):
-        """A class method for getting the type of hazard for close approach.
+        """Class method for getting the type of hazard for close approach.
 
         :param approach: close approach object
         :return: approach hazard filter.
@@ -195,7 +195,6 @@ def create_filters(date=None, start_date=None, end_date=None,
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-    # TODO: Decide how you will represent your filters.
     locals()
 
     return locals()
